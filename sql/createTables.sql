@@ -11,5 +11,5 @@ CREATE TABLE developers_info (
 	"developerSince" DATE NOT NULL,
 	"preferredOs" "OS" NOT NULL,
 	"developerId" INTEGER UNIQUE,
-	FOREIGN KEY ("developerId") REFERENCES developers("id")
+	FOREIGN KEY ("developerId") REFERENCES developers ("id")
 );

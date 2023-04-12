@@ -6,7 +6,18 @@ type iDeveloper = {
 
 type iDeveloperRequest = Omit <iDeveloper, "id">;
 
+type iDeveloperInfo = {
+  id: number
+  developerSince: Date
+  preferredOs: string
+  developerId: number
+};
+
+type iDeveloperInfoRequest = Omit <iDeveloperInfo, "id">;
+
 export {
   iDeveloper,
-  iDeveloperRequest
+  iDeveloperRequest,
+  iDeveloperInfo,
+  iDeveloperInfoRequest
 };
