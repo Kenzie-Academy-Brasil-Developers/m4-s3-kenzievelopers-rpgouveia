@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { QueryConfig, QueryResult } from "pg";
-import { iDeveloper, iDeveloperInfo } from "./interfaces";
+import { iDeveloper, iDeveloperInfo, iEnumRange } from "./interfaces";
 import { client } from "./database";
 
 const checkDeveloperId = async (
@@ -59,8 +59,11 @@ const checkPreferredOS = async (
   response: Response,
   next: NextFunction
 ): Promise<Response | void> => {
+  const query: string = `SELECT enum_range(NULL::"OS");`;
+  const queryResult: QueryResult<iEnumRange> = await client.query(query);
+  const optionsOS: string = queryResult.rows[0].enum_range;
   const preferredOS: string = request.body.preferredOS;
-  if (preferredOS === "Windows" || preferredOS === "Linux" || preferredOS === "MacOS") {
+  if (optionsOS.includes(preferredOS)) {
     return next();
   };
   return response.status(400).json({
