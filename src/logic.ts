@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { iDeveloper, iDeveloperInfoRequest, iDeveloperRequest } from "./interfaces";
+import { iDeveloper, iDeveloperInfo, iDeveloperInfoRequest, iDeveloperRequest } from "./interfaces";
 import format from "pg-format";
 import { QueryResult } from "pg";
 import { client } from "./database";
@@ -33,7 +33,7 @@ const createDeveloperInfo = async (
   const id = Number(request.params.id);
   const developerInfo: iDeveloperInfoRequest = request.body;
   developerInfo.developerId = id;
-
+    
   const query: string = format(`
   INSERT INTO
     developers_info (%I)
@@ -45,7 +45,7 @@ const createDeveloperInfo = async (
   Object.values(developerInfo)
   );
 
-  const queryResult: QueryResult = await client.query(query)
+  const queryResult: QueryResult<iDeveloperInfo> = await client.query(query)
   
   return response.status(201).json(queryResult.rows[0])
 };

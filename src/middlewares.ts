@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { QueryConfig, QueryResult } from "pg";
-import { iDeveloper } from "./interfaces";
+import { iDeveloper, iDeveloperInfo } from "./interfaces";
 import { client } from "./database";
 
 const checkDeveloperId = async (
@@ -17,6 +17,7 @@ const checkDeveloperId = async (
       message: "Developer not found."
     })
   };
+  response.locals.developerId = queryResult.rows[0]; // Caso precise
   return next();
 };
 
@@ -25,7 +26,7 @@ const checkEmailExists = async (
   response: Response,
   next: NextFunction): Promise<Response | void> => {
   const developerData: iDeveloper = request.body;
-  const query = `SELECT * FROM developers WHERE email = $1;`;
+  const query: string = `SELECT * FROM developers WHERE email = $1;`;
   const queryConfig: QueryConfig = { text: query, values: [developerData.email]};
   const queryResult: QueryResult<iDeveloper> = await client.query(queryConfig);
   if (queryResult.rows.length > 0) {
@@ -36,7 +37,25 @@ const checkEmailExists = async (
   return next();
 };
 
+const checkInfosExists = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+): Promise<Response | void> => {
+  const developerId: number = Number(request.params.id)
+  const query: string = `SELECT * FROM developers_info WHERE "developerId" = $1;`;
+  const queryConfig: QueryConfig = { text: query, values: [developerId] };
+  const queryResult: QueryResult<iDeveloperInfo> = await client.query(queryConfig);
+  if (queryResult.rowCount === 0) {
+    return next();
+  }
+  return response.status(409).json({
+    message: "Developer infos already exists."
+  })
+};
+
 export {
   checkDeveloperId,
-  checkEmailExists
+  checkEmailExists,
+  checkInfosExists
 };
