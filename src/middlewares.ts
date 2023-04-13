@@ -42,7 +42,7 @@ const checkInfosExists = async (
   response: Response,
   next: NextFunction
 ): Promise<Response | void> => {
-  const developerId: number = Number(request.params.id)
+  const developerId: number = Number(request.params.id);
   const query: string = `SELECT * FROM developers_info WHERE "developerId" = $1;`;
   const queryConfig: QueryConfig = { text: query, values: [developerId] };
   const queryResult: QueryResult<iDeveloperInfo> = await client.query(queryConfig);
@@ -54,8 +54,24 @@ const checkInfosExists = async (
   })
 };
 
+const checkPreferredOS = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+): Promise<Response | void> => {
+  const preferredOS: string = request.body.preferredOS;
+  if (preferredOS === "Windows" || preferredOS === "Linux" || preferredOS === "MacOS") {
+    return next();
+  };
+  return response.status(400).json({
+    message: "Invalid OS option.",
+    options: ["Windows", "Linux", "MacOS"]
+  })
+};
+
 export {
   checkDeveloperId,
   checkEmailExists,
-  checkInfosExists
+  checkInfosExists,
+  checkPreferredOS
 };
