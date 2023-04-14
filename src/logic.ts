@@ -50,7 +50,7 @@ const createDeveloperInfo = async (
   return response.status(201).json(queryResult.rows[0])
 };
 
-const getDevelopers = async (
+const retrieveDeveloper = async (
   request: Request,
   response: Response,
 ): Promise<Response> => {
@@ -109,7 +109,7 @@ const deleteDeveloper = async (
 export {
   createDeveloper,
   createDeveloperInfo,
-  getDevelopers,
+  retrieveDeveloper,
   updateDeveloper,
   deleteDeveloper
 };
