@@ -33,7 +33,7 @@ const createDeveloperInfos = async (
   const id = Number(request.params.id);
   const developerInfos: iDeveloperInfosRequest = request.body;
   developerInfos.developerId = id;
-    
+
   const query: string = format(`
   INSERT INTO
     developer_infos (%I)

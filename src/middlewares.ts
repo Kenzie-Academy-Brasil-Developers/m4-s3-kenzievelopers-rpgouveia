@@ -43,7 +43,7 @@ const checkInfosExists = async (
   next: NextFunction
 ): Promise<Response | void> => {
   const developerId: number = Number(request.params.id);
-  const query: string = `SELECT * FROM developers_info WHERE "developerId" = $1;`;
+  const query: string = `SELECT * FROM developer_infos WHERE "developerId" = $1;`;
   const queryConfig: QueryConfig = { text: query, values: [developerId] };
   const queryResult: QueryResult<iDeveloperInfos> = await client.query(queryConfig);
   if (queryResult.rowCount === 0) {
