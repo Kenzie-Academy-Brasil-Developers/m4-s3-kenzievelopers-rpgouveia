@@ -71,8 +71,8 @@ const retrieveDeveloper = async (
   `;
   const queryConfig: QueryConfig = { text: query, values: [id]};
   const queryResult: QueryResult<iGetDeveloperRequest> = await client.query(queryConfig);
-    
-  return response.status(200).json(queryResult.rows)
+  
+  return response.status(200).json(queryResult.rows[0])
 };
 
 const updateDeveloper = async (
