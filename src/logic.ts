@@ -74,6 +74,27 @@ const getDevelopers = async (
   return response.status(200).json(queryResult.rows)
 };
 
+const updateDeveloper = async (
+  request: Request,
+  response: Response
+): Promise<Response> => {
+  const id = Number(request.params.id);
+  const developerData: Partial <iDeveloperRequest> = request.body;
+  const query: string = format(`
+    UPDATE
+      developers
+    SET (%I) = ROW (%L)
+    WHERE 
+      id = $1
+    RETURNING *;
+  `,
+  Object.keys(developerData),
+  Object.values(developerData));
+  const queryConfig: QueryConfig = { text: query, values: [id] };
+  const queryResult: QueryResult<iDeveloper> = await client.query(queryConfig);
+  return response.status(200).json(queryResult.rows[0]);
+};
+
 const deleteDeveloper = async (
   request: Request,
   response: Response
@@ -89,5 +110,6 @@ export {
   createDeveloper,
   createDeveloperInfo,
   getDevelopers,
+  updateDeveloper,
   deleteDeveloper
 };
