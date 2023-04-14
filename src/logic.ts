@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { iDeveloper, iDeveloperInfo, iDeveloperInfoRequest, iDeveloperRequest, iGetDeveloperRequest } from "./interfaces";
 import format from "pg-format";
-import { QueryResult } from "pg";
+import { QueryConfig, QueryResult } from "pg";
 import { client } from "./database";
 
 const createDeveloper = async (
@@ -74,8 +74,20 @@ const getDevelopers = async (
   return response.status(200).json(queryResult.rows)
 };
 
+const deleteDeveloper = async (
+  request: Request,
+  response: Response
+): Promise<Response> => {
+  const id = Number(request.params.id);
+  const query: string = `DELETE FROM developers WHERE id = $1`;
+  const queryConfig: QueryConfig = { text: query, values: [id] };
+  await client.query(queryConfig);
+  return response.status(204).send();
+};
+
 export {
   createDeveloper,
   createDeveloperInfo,
-  getDevelopers
+  getDevelopers,
+  deleteDeveloper
 };
