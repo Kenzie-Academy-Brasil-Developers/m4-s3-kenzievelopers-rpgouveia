@@ -6,24 +6,24 @@ type iDeveloper = {
 
 type iDeveloperRequest = Omit <iDeveloper, "id">;
 
-type iDeveloperInfo = {
+type iDeveloperInfos = {
   id: number
   developerSince: Date
   preferredOs: string
   developerId: number
 };
 
-type iDeveloperInfoRequest = Omit <iDeveloperInfo, "id">;
+type iDeveloperInfosRequest = Omit <iDeveloperInfos, "id">;
 
 interface iEnumRange { enum_range: string };
 
-interface iGetDeveloperRequest extends iDeveloper, iDeveloperInfo {};
+interface iGetDeveloperRequest extends iDeveloper, iDeveloperInfos {};
 
 export {
   iDeveloper,
   iDeveloperRequest,
-  iDeveloperInfo,
-  iDeveloperInfoRequest,
+  iDeveloperInfos,
+  iDeveloperInfosRequest,
   iEnumRange,
   iGetDeveloperRequest
 };

@@ -9,7 +9,7 @@ const server = (port: number) =>
     console.log(`Server is running on port ${port}.`);
   });
 
-if (process.env.NODE_ENV === "dev" || "test") {
+if (process.env.NODE_ENV === "dev") {
   server(appPort);
 }
 

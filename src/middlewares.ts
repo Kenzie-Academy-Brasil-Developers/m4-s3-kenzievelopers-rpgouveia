@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { QueryConfig, QueryResult } from "pg";
-import { iDeveloper, iDeveloperInfo, iEnumRange } from "./interfaces";
+import { iDeveloper, iDeveloperInfos, iEnumRange } from "./interfaces";
 import { client } from "./database";
 
 const checkDeveloperId = async (
@@ -45,7 +45,7 @@ const checkInfosExists = async (
   const developerId: number = Number(request.params.id);
   const query: string = `SELECT * FROM developers_info WHERE "developerId" = $1;`;
   const queryConfig: QueryConfig = { text: query, values: [developerId] };
-  const queryResult: QueryResult<iDeveloperInfo> = await client.query(queryConfig);
+  const queryResult: QueryResult<iDeveloperInfos> = await client.query(queryConfig);
   if (queryResult.rowCount === 0) {
     return next();
   }

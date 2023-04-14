@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { iDeveloper, iDeveloperInfo, iDeveloperInfoRequest, iDeveloperRequest, iGetDeveloperRequest } from "./interfaces";
+import { iDeveloper, iDeveloperInfos, iDeveloperInfosRequest, iDeveloperRequest, iGetDeveloperRequest } from "./interfaces";
 import format from "pg-format";
 import { QueryConfig, QueryResult } from "pg";
 import { client } from "./database";
@@ -26,26 +26,26 @@ const createDeveloper = async (
   return response.status(201).json(queryResult.rows[0]);
 };
 
-const createDeveloperInfo = async (
+const createDeveloperInfos = async (
   request: Request,
   response: Response
 ): Promise <Response> => {
   const id = Number(request.params.id);
-  const developerInfo: iDeveloperInfoRequest = request.body;
-  developerInfo.developerId = id;
+  const developerInfos: iDeveloperInfosRequest = request.body;
+  developerInfos.developerId = id;
     
   const query: string = format(`
   INSERT INTO
-    developers_info (%I)
+    developer_infos (%I)
   VALUES
     (%L)
   RETURNING *;
   `,
-  Object.keys(developerInfo),
-  Object.values(developerInfo)
+  Object.keys(developerInfos),
+  Object.values(developerInfos)
   );
 
-  const queryResult: QueryResult<iDeveloperInfo> = await client.query(query)
+  const queryResult: QueryResult<iDeveloperInfos> = await client.query(query)
   
   return response.status(201).json(queryResult.rows[0])
 };
@@ -54,23 +54,24 @@ const retrieveDeveloper = async (
   request: Request,
   response: Response,
 ): Promise<Response> => {
+  const id = Number(request.params.id);
+    
   const query: string = `
     SELECT 
       d.id "developerId",
-      d."name" "developerName",
+      d.name "developerName",
       d.email "developerEmail",
       di."developerSince" "developerInfoDeveloperSince",
       di."preferredOS" "developerInfoPreferredOS"
     FROM
       developers d 
-    JOIN
-      developers_info di 
-    ON
-      d."id" = di."developerId" ;
+    LEFT JOIN
+      developer_infos di ON d."id" = di."developerId"
+    WHERE d."id" = $1;
   `;
-
-  const queryResult: QueryResult<iGetDeveloperRequest> = await client.query(query);
-
+  const queryConfig: QueryConfig = { text: query, values: [id]};
+  const queryResult: QueryResult<iGetDeveloperRequest> = await client.query(queryConfig);
+    
   return response.status(200).json(queryResult.rows)
 };
 
@@ -108,7 +109,7 @@ const deleteDeveloper = async (
 
 export {
   createDeveloper,
-  createDeveloperInfo,
+  createDeveloperInfos,
   retrieveDeveloper,
   updateDeveloper,
   deleteDeveloper
