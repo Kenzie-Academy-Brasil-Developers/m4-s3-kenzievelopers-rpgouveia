@@ -17,7 +17,7 @@ const checkDeveloperId = async (
       message: "Developer not found."
     })
   };
-  response.locals.developerId = queryResult.rows[0]; // Caso precise
+  response.locals.developerId = queryResult.rows[0];
   return next();
 };
 

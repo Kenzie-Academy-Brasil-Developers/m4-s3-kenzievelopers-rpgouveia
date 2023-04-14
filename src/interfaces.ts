@@ -15,14 +15,15 @@ type iDeveloperInfo = {
 
 type iDeveloperInfoRequest = Omit <iDeveloperInfo, "id">;
 
-interface iEnumRange {
-  enum_range: string;
-}
+interface iEnumRange { enum_range: string };
+
+interface iGetDeveloperRequest extends iDeveloper, iDeveloperInfo {};
 
 export {
   iDeveloper,
   iDeveloperRequest,
   iDeveloperInfo,
   iDeveloperInfoRequest,
-  iEnumRange
+  iEnumRange,
+  iGetDeveloperRequest
 };

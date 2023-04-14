@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { iDeveloper, iDeveloperInfo, iDeveloperInfoRequest, iDeveloperRequest } from "./interfaces";
+import { iDeveloper, iDeveloperInfo, iDeveloperInfoRequest, iDeveloperRequest, iGetDeveloperRequest } from "./interfaces";
 import format from "pg-format";
 import { QueryResult } from "pg";
 import { client } from "./database";
@@ -50,7 +50,32 @@ const createDeveloperInfo = async (
   return response.status(201).json(queryResult.rows[0])
 };
 
+const getDevelopers = async (
+  request: Request,
+  response: Response,
+): Promise<Response> => {
+  const query: string = `
+    SELECT 
+      d.id "developerId",
+      d."name" "developerName",
+      d.email "developerEmail",
+      di."developerSince" "developerInfoDeveloperSince",
+      di."preferredOS" "developerInfoPreferredOS"
+    FROM
+      developers d 
+    JOIN
+      developers_info di 
+    ON
+      d."id" = di."developerId" ;
+  `;
+
+  const queryResult: QueryResult<iGetDeveloperRequest> = await client.query(query);
+
+  return response.status(200).json(queryResult.rows)
+};
+
 export {
   createDeveloper,
-  createDeveloperInfo
+  createDeveloperInfo,
+  getDevelopers
 };
