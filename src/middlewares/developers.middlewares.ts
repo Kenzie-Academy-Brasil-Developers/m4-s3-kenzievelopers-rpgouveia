@@ -8,7 +8,12 @@ const checkDeveloperId = async (
   response: Response,
   next: NextFunction
 ): Promise<Response | void> => {
-  const id = Number(request.params.id);
+  let id = Number(request.params.id);
+    
+  if (request.route.path === '/projects' && request.method === 'POST') {
+    id = request.body.developerId;
+  };
+
   const query: string = `SELECT * FROM developers WHERE id = $1;`;
   const queryConfig: QueryConfig = { text: query, values:[id] };
   const queryResult: QueryResult<iDeveloper> = await client.query(queryConfig);

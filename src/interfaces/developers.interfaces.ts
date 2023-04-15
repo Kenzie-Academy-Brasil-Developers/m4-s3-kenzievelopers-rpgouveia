@@ -17,7 +17,7 @@ type iDeveloperInfosRequest = Omit <iDeveloperInfos, "id">;
 
 interface iEnumRange { enum_range: string };
 
-interface iGetDeveloperRequest extends iDeveloper, iDeveloperInfos {};
+interface iRetrieveDeveloperRequest extends iDeveloper, iDeveloperInfos {};
 
 export {
   iDeveloper,
@@ -25,5 +25,5 @@ export {
   iDeveloperInfos,
   iDeveloperInfosRequest,
   iEnumRange,
-  iGetDeveloperRequest
+  iRetrieveDeveloperRequest
 };

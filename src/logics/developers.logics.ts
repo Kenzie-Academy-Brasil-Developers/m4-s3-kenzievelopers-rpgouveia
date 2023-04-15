@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { iDeveloper, iDeveloperInfos, iDeveloperInfosRequest, iDeveloperRequest, iGetDeveloperRequest } from "../interfaces/developers.interfaces";
+import { iDeveloper, iDeveloperInfos, iDeveloperInfosRequest, iDeveloperRequest, iRetrieveDeveloperRequest } from "../interfaces/developers.interfaces";
 import format from "pg-format";
 import { QueryConfig, QueryResult } from "pg";
 import { client } from "../database";
@@ -70,7 +70,7 @@ const retrieveDeveloper = async (
     WHERE d."id" = $1;
   `;
   const queryConfig: QueryConfig = { text: query, values: [id]};
-  const queryResult: QueryResult<iGetDeveloperRequest> = await client.query(queryConfig);
+  const queryResult: QueryResult<iRetrieveDeveloperRequest> = await client.query(queryConfig);
   
   return response.status(200).json(queryResult.rows[0])
 };
