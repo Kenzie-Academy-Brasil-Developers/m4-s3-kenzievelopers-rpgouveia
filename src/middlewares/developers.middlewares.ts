@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { QueryConfig, QueryResult } from "pg";
-import { iDeveloper, iDeveloperInfos, iEnumRange } from "./interfaces";
-import { client } from "./database";
+import { iDeveloper, iDeveloperInfos, iEnumRange } from "../interfaces/developers.interfaces";
+import { client } from "../database";
 
 const checkDeveloperId = async (
   request: Request,

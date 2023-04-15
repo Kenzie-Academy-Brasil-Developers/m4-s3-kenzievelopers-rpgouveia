@@ -1,7 +1,7 @@
 import express, { Application } from "express";
 import "dotenv/config";
-import { createDeveloper, createDeveloperInfos, deleteDeveloper, retrieveDeveloper, updateDeveloper } from "./logic";
-import { checkDeveloperId, checkEmailExists, checkInfosExists, checkPreferredOS } from "./middlewares";
+import { createDeveloper, createDeveloperInfos, deleteDeveloper, retrieveDeveloper, updateDeveloper } from "./logics/developers.logics";
+import { checkDeveloperId, checkEmailExists, checkInfosExists, checkPreferredOS } from "./middlewares/developers.middlewares";
 
 const app: Application = express();
 app.use(express.json());

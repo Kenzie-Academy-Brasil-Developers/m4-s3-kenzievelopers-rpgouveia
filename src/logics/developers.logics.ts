@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { iDeveloper, iDeveloperInfos, iDeveloperInfosRequest, iDeveloperRequest, iGetDeveloperRequest } from "./interfaces";
+import { iDeveloper, iDeveloperInfos, iDeveloperInfosRequest, iDeveloperRequest, iGetDeveloperRequest } from "../interfaces/developers.interfaces";
 import format from "pg-format";
 import { QueryConfig, QueryResult } from "pg";
-import { client } from "./database";
+import { client } from "../database";
 
 const createDeveloper = async (
   request: Request,
