@@ -31,7 +31,7 @@ const retrieveProject = async (
   request: Request,
   response: Response
 ): Promise<Response> => {
-  const id = request.params.id;
+  const id = Number(request.params.id);
   const query: string = `
   SELECT
     p.id "projectId",
@@ -55,9 +55,9 @@ const retrieveProject = async (
   ON
     pt."technologyId" = t.id 
   WHERE
-    p."developerId" = $1;
+    p.id = $1;
 `;
-  const queryConfig: QueryConfig = { text: query, values: [id]};
+  const queryConfig: QueryConfig = { text: query, values: [id] };
   const queryResult: QueryResult = await client.query(queryConfig);
     
   return response.status(200).json(queryResult.rows);
@@ -67,7 +67,7 @@ const updateProject = async (
   request: Request,
   response: Response
 ): Promise<Response> => {
-  const projectId = request.params.id;
+  const id = Number(request.params.id);
   const projectData: Partial<iProject> = request.body;
   const query: string = format(`
     UPDATE
@@ -81,14 +81,34 @@ const updateProject = async (
   Object.values(projectData)
   );
 
-  const queryConfig: QueryConfig = { text: query, values: [projectId]};
+  const queryConfig: QueryConfig = { text: query, values: [id] };
   const queryResult: QueryResult<iProject> = await client.query(queryConfig);
   
   return response.status(200).json(queryResult.rows[0]);
 };
 
+const deleteProject = async (
+  request: Request,
+  response: Response
+): Promise<Response> => {
+  const id = Number(request.params.id);
+
+  const query: string = `
+  DELETE FROM
+    projects
+  WHERE 
+    id = $1;
+  `;
+
+  const queryConfig: QueryConfig = { text: query, values: [id] };
+  await client.query(queryConfig);
+
+  return response.status(204).send();
+};
+
 export {
   createProject,
   retrieveProject,
-  updateProject
+  updateProject,
+  deleteProject
 };

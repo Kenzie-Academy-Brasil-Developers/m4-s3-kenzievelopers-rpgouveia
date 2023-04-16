@@ -9,9 +9,11 @@ const checkDeveloperId = async (
   next: NextFunction
 ): Promise<Response | void> => {
   let id = Number(request.params.id);
-    
-  if (request.route.path === '/projects' && request.method === 'POST' || request.method === 'PATCH') {
-    id = request.body.developerId;
+  
+  const endpoints: string[] = ['/projects', '/projects/:id'];
+  const methods: string[] = ['POST', 'PATCH'];
+  if ((endpoints.includes(request.route.path)) && (methods.includes(request.method))) {
+    id = Number(request.body.developerId);
   };
 
   const query: string = `SELECT * FROM developers WHERE id = $1;`;
@@ -22,7 +24,7 @@ const checkDeveloperId = async (
       message: "Developer not found."
     })
   };
-  response.locals.developerId = queryResult.rows[0];
+
   return next();
 };
 
