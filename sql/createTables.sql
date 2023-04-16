@@ -49,6 +49,6 @@ CREATE TABLE projects_technologies (
     "addedIn" DATE NOT NULL,
     "technologyId" INTEGER NOT NULL,
     "projectId" INTEGER NOT NULL,
-    FOREIGN KEY ("technologyId") REFERENCES technologies(id),
-    FOREIGN KEY ("projectId") REFERENCES projects(id)
+    FOREIGN KEY ("technologyId") REFERENCES technologies(id) ON DELETE CASCADE,
+    FOREIGN KEY ("projectId") REFERENCES projects(id) ON DELETE CASCADE
 );

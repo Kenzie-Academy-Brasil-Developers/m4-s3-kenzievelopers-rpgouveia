@@ -8,6 +8,33 @@ type iProject = {
   developerId: number
 };
 
+type iTechnology = {
+  id: number
+  name: string
+};
+
+type iProjectTechnology = {
+  id: number
+  addedIn: Date
+  technologyId: number
+  projectId: number
+};
+
+type iAddTechnologyResponse = {
+  technologyId: number
+  technologyName: string
+  projectId: number
+  projectName: string
+  projectDescription?: string | undefined
+  projectEstimatedTime: string
+  projectRepository: string
+  projectStartDate: Date
+  projectEndDate?: Date | undefined
+};
+
 export {
-  iProject
-}
+  iProject,
+  iTechnology,
+  iProjectTechnology,
+  iAddTechnologyResponse
+};
