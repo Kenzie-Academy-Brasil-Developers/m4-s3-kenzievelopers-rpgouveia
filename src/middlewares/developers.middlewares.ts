@@ -10,7 +10,7 @@ const checkDeveloperId = async (
 ): Promise<Response | void> => {
   let id = Number(request.params.id);
     
-  if (request.route.path === '/projects' && request.method === 'POST') {
+  if (request.route.path === '/projects' && request.method === 'POST' || request.method === 'PATCH') {
     id = request.body.developerId;
   };
 

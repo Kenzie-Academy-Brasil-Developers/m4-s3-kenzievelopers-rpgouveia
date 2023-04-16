@@ -63,7 +63,32 @@ const retrieveProject = async (
   return response.status(200).json(queryResult.rows);
 };
 
+const updateProject = async (
+  request: Request,
+  response: Response
+): Promise<Response> => {
+  const projectId = request.params.id;
+  const projectData: Partial<iProject> = request.body;
+  const query: string = format(`
+    UPDATE
+      projects p 
+    SET (%I) = ROW (%L)
+    WHERE
+      p.id = $1
+    RETURNING *;
+  `,
+  Object.keys(projectData),
+  Object.values(projectData)
+  );
+
+  const queryConfig: QueryConfig = { text: query, values: [projectId]};
+  const queryResult: QueryResult<iProject> = await client.query(queryConfig);
+  
+  return response.status(200).json(queryResult.rows[0]);
+};
+
 export {
   createProject,
-  retrieveProject
+  retrieveProject,
+  updateProject
 };
