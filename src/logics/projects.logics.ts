@@ -10,8 +10,7 @@ const createProject = async (
 ): Promise<Response> => {
   const projectData: iProject = request.body;
 
-  const query: string = format(
-    `
+  const query: string = format(`
     INSERT INTO
       projects (%I)
     VALUES

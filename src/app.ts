@@ -3,7 +3,7 @@ import "dotenv/config";
 import { createDeveloper, createDeveloperInfos, deleteDeveloper, retrieveDeveloper, updateDeveloper } from "./logics/developers.logics";
 import { checkDeveloperId, checkEmailExists, checkInfosExists, checkPreferredOS } from "./middlewares/developers.middlewares";
 import { addTechnology, createProject, deleteProject, retrieveProject, updateProject } from "./logics/projects.logics";
-import { checkProjectId } from "./middlewares/projects.middlewares";
+import { checkProjectId, checkValidTechnology } from "./middlewares/projects.middlewares";
 
 const app: Application = express();
 app.use(express.json());
@@ -19,6 +19,6 @@ app.get("/projects/:id", checkProjectId, retrieveProject);
 app.patch("/projects/:id", checkProjectId, checkDeveloperId, updateProject);
 app.delete("/projects/:id", checkProjectId, deleteProject);
 
-app.post("/projects/:id/technologies", checkProjectId, addTechnology);
+app.post("/projects/:id/technologies", checkProjectId, checkValidTechnology, addTechnology);
 
 export default app;

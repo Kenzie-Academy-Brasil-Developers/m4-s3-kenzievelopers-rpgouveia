@@ -13,6 +13,8 @@ type iTechnology = {
   name: string
 };
 
+type iValidTechnologyResult = Omit<iTechnology, "id">;
+
 type iProjectTechnology = {
   id: number
   addedIn: Date
@@ -36,5 +38,6 @@ export {
   iProject,
   iTechnology,
   iProjectTechnology,
-  iAddTechnologyResponse
+  iAddTechnologyResponse,
+  iValidTechnologyResult
 };
