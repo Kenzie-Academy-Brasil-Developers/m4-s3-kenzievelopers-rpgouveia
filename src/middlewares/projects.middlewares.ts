@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { QueryConfig, QueryResult } from "pg";
 import { iDeveloper } from "../interfaces/developers.interfaces";
 import { client } from "../database";
-import { iValidTechnologyResult } from "../interfaces/projects.interfaces";
+import { iProjectTechnology, iTechnology, iValidTechnologyResult } from "../interfaces/projects.interfaces";
 
 const checkProjectId = async (
   request: Request,
@@ -42,7 +42,41 @@ const checkValidTechnology = async (
   return next();
 };
 
+const checkTechnologyExists = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+): Promise<Response | void> => {
+  const projectId = Number(request.params.id);
+  const technologyName: string = request.body.name;
+
+  const searchQuery: string = `SELECT * FROM technologies t WHERE t.name = $1;`;
+  const searchQueryConfig: QueryConfig = { text: searchQuery, values: [technologyName] };
+  const searchQueryResult: QueryResult<iTechnology> = await client.query(searchQueryConfig);
+  const technologyId = searchQueryResult.rows[0].id;
+
+  const technologyQuery: string = `
+    SELECT
+      *
+    FROM
+      projects_technologies
+    WHERE
+      "technologyId" = $1 AND "projectId" = $2;
+  `
+  const technologyQueryConfig: QueryConfig = { text:technologyQuery, values: [technologyId, projectId] };
+  const technologyQueryResult: QueryResult<iProjectTechnology> = await client.query(technologyQueryConfig);
+
+  if (technologyQueryResult.rowCount > 0) {
+    return response.status(409).json({
+      message: "This technology is already associated with the project"
+    })
+  };
+  
+  return next();
+};
+
 export {
   checkProjectId,
-  checkValidTechnology
+  checkValidTechnology,
+  checkTechnologyExists
 }
