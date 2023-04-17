@@ -9,13 +9,11 @@ const checkDeveloperId = async (
   next: NextFunction
 ): Promise<Response | void> => {
   let id = Number(request.params.id);
-  
   const endpoints: string[] = ['/projects', '/projects/:id'];
   const methods: string[] = ['POST', 'PATCH'];
   if ((endpoints.includes(request.route.path)) && (methods.includes(request.method))) {
     id = Number(request.body.developerId);
   };
-
   const query: string = `SELECT * FROM developers WHERE id = $1;`;
   const queryConfig: QueryConfig = { text: query, values:[id] };
   const queryResult: QueryResult<iDeveloper> = await client.query(queryConfig);
@@ -24,7 +22,6 @@ const checkDeveloperId = async (
       message: "Developer not found."
     })
   };
-
   return next();
 };
 
@@ -53,12 +50,12 @@ const checkInfosExists = async (
   const query: string = `SELECT * FROM developer_infos WHERE "developerId" = $1;`;
   const queryConfig: QueryConfig = { text: query, values: [developerId] };
   const queryResult: QueryResult<iDeveloperInfos> = await client.query(queryConfig);
-  if (queryResult.rowCount === 0) {
-    return next();
-  }
-  return response.status(409).json({
-    message: "Developer infos already exists."
-  })
+  if (queryResult.rowCount !== 0) {
+    return response.status(409).json({
+      message: "Developer infos already exists."
+    })
+  };
+  return next();
 };
 
 const checkPreferredOS = async (
@@ -70,13 +67,13 @@ const checkPreferredOS = async (
   const queryResult: QueryResult<iEnumRange> = await client.query(query);
   const optionsOS: string = queryResult.rows[0].enum_range;
   const preferredOS: string = request.body.preferredOS;
-  if (optionsOS.includes(preferredOS)) {
-    return next();
+  if (!optionsOS.includes(preferredOS)) {
+    return response.status(400).json({
+      message: "Invalid OS option.",
+      options: ["Windows", "Linux", "MacOS"]
+    })
   };
-  return response.status(400).json({
-    message: "Invalid OS option.",
-    options: ["Windows", "Linux", "MacOS"]
-  })
+  return next();
 };
 
 export {
