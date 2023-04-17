@@ -27,7 +27,14 @@ const checkValidTechnology = async (
   response: Response,
   next: NextFunction
 ): Promise<Response | void> => {
-  const technologyName = request.body.name;
+  let technologyName = request.body.name;
+
+  const endpoints: string[] = ['/projects/:id/technologies/:name'];
+  const methods: string[] = ['DELETE'];
+  if ((endpoints.includes(request.route.path)) && (methods.includes(request.method))) {
+    technologyName = request.params.name;
+  };
+
   const query: string = `SELECT name FROM technologies;`;
   const queryConfig: QueryConfig = { text: query };
   const queryResult: QueryResult<iValidTechnologyResult> = await client.query(queryConfig);
@@ -75,8 +82,42 @@ const checkTechnologyExists = async (
   return next();
 };
 
+const checkTechnologyLink = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+): Promise<Response | void> => {
+  const projectId = Number(request.params.id);
+  const technologyName: string = request.params.name;
+
+  const searchQuery: string = `SELECT * FROM technologies t WHERE t.name = $1;`;
+  const searchQueryConfig: QueryConfig = { text: searchQuery, values: [technologyName] };
+  const searchQueryResult: QueryResult<iTechnology> = await client.query(searchQueryConfig);
+  const technologyId = searchQueryResult.rows[0].id;
+  
+  const technologyQuery: string = `
+    SELECT
+      *
+    FROM
+      projects_technologies
+    WHERE
+      "technologyId" = $1 AND "projectId" = $2;
+  `
+  const technologyQueryConfig: QueryConfig = { text:technologyQuery, values: [technologyId, projectId] };
+  const technologyQueryResult: QueryResult<iProjectTechnology> = await client.query(technologyQueryConfig);
+
+  if (technologyQueryResult.rowCount === 0) {
+    return response.status(400).json({
+      message: "Technology not related to the project."
+    })
+  };
+
+  return next();
+};
+
 export {
   checkProjectId,
   checkValidTechnology,
-  checkTechnologyExists
+  checkTechnologyExists,
+  checkTechnologyLink
 }
