@@ -49,6 +49,13 @@ const checkValidTechnology = async (
   return next();
 };
 
+const findTechnologyByName = async (technologyName: string) => {
+  const searchQuery: string = `SELECT * FROM technologies t WHERE t.name = $1;`;
+  const searchQueryConfig: QueryConfig = { text: searchQuery, values: [technologyName] };
+  const searchQueryResult: QueryResult<iTechnology> = await client.query(searchQueryConfig);
+  return searchQueryResult.rows[0].id;
+};
+
 const checkTechnologyExists = async (
   request: Request,
   response: Response,
@@ -56,11 +63,7 @@ const checkTechnologyExists = async (
 ): Promise<Response | void> => {
   const projectId = Number(request.params.id);
   const technologyName: string = request.body.name;
-
-  const searchQuery: string = `SELECT * FROM technologies t WHERE t.name = $1;`;
-  const searchQueryConfig: QueryConfig = { text: searchQuery, values: [technologyName] };
-  const searchQueryResult: QueryResult<iTechnology> = await client.query(searchQueryConfig);
-  const technologyId = searchQueryResult.rows[0].id;
+  const technologyId = await findTechnologyByName(technologyName);
 
   const technologyQuery: string = `
     SELECT
@@ -78,7 +81,7 @@ const checkTechnologyExists = async (
       message: "This technology is already associated with the project"
     })
   };
-  
+  response.locals.technologyId = technologyId;
   return next();
 };
 
@@ -89,11 +92,7 @@ const checkTechnologyLink = async (
 ): Promise<Response | void> => {
   const projectId = Number(request.params.id);
   const technologyName: string = request.params.name;
-
-  const searchQuery: string = `SELECT * FROM technologies t WHERE t.name = $1;`;
-  const searchQueryConfig: QueryConfig = { text: searchQuery, values: [technologyName] };
-  const searchQueryResult: QueryResult<iTechnology> = await client.query(searchQueryConfig);
-  const technologyId = searchQueryResult.rows[0].id;
+  const technologyId = await findTechnologyByName(technologyName);
   
   const technologyQuery: string = `
     SELECT
@@ -111,7 +110,7 @@ const checkTechnologyLink = async (
       message: "Technology not related to the project."
     })
   };
-
+  response.locals.technologyId = technologyId;
   return next();
 };
 

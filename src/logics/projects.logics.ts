@@ -112,11 +112,7 @@ const addTechnology = async (
   const currentDate = new Date().toISOString().split('T')[0];
   const projectId = Number(request.params.id);
   const technologyName: string = request.body.name;
-
-  const searchQuery: string = `SELECT * FROM technologies t WHERE t.name = $1;`;
-  const searchQueryConfig: QueryConfig = { text: searchQuery, values: [technologyName] };
-  const searchQueryResult: QueryResult<iTechnology> = await client.query(searchQueryConfig);
-  const technologyId = searchQueryResult.rows[0].id;
+  const technologyId = response.locals.technologyId;
   
   const insertQuery: string = `
     INSERT INTO
@@ -154,12 +150,7 @@ const removeTechnology = async (
   response: Response
 ): Promise <Response> => {
   const projectId = request.params.id;
-  const technologyName = request.params.name;
-
-  const searchQuery: string = `SELECT * FROM technologies t WHERE t.name = $1;`;
-  const searchQueryConfig: QueryConfig = { text: searchQuery, values: [technologyName] };
-  const searchQueryResult: QueryResult<iTechnology> = await client.query(searchQueryConfig);
-  const technologyId = searchQueryResult.rows[0].id;
+  const technologyId = response.locals.technologyId;
   
   const removeQuery: string = `
     DELETE FROM
